@@ -1,23 +1,20 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Load dataset
-df = pd.read_csv("Hotel Reservations.csv")
+df = pd.read_csv("data/Hotel Reservations.csv")
 
-# Show first 5 rows
+print("Dataset loaded successfully!\n")
+
 print(df.head())
 
-# Show dataset info
-print(df.info())
+print("\nColumns:")
+print(df.columns)
 
-# Missing values
+print("\nShape:")
+print(df.shape)
+
+print("\nMissing Values:")
 print(df.isnull().sum())
 
-# Booking status counts
-print(df['booking_status'].value_counts())
-
-# Graph
-sns.countplot(data=df, x='booking_status')
-plt.title("Booking Status")
-plt.show()
+print("\nBooking Status Count:")
+print(df["booking_status"].value_counts())
