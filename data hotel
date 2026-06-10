@@ -1,0 +1,132 @@
+# Hotel Reservation Cancellation Prediction — MLOps Project
+
+End-to-end MLOps pipeline for predicting hotel booking cancellations.  
+Built as part of Opemioniye's 8-week MLOps workshop.
+
+---
+
+## Dataset
+
+- **Source**: [Kaggle – Hotel Reservations Classification Dataset](https://www.kaggle.com/datasets/ahsan81/hotel-reservations-classification-dataset)
+- **Rows**: 36,275 bookings
+- **Target**: `booking_status` — `Canceled` (33%) vs `Not_Canceled` (67%)
+
+### Key Features
+
+| Feature | Description |
+|---|---|
+| `lead_time` | Days between booking and arrival |
+| `avg_price_per_room` | Average nightly rate |
+| `no_of_special_requests` | Number of special requests made |
+| `market_segment_type` | Booking channel (Online, Offline, etc.) |
+| `no_of_previous_cancellations` | Historical cancellations by guest |
+
+---
+
+## Project Structure
+
+```
+hotel_mlops/
+├── data/
+│   └── Hotel_Reservations.csv
+├── src/
+│   ├── data_ingestion.py   # EDA
+│   ├── preprocessing.py    # Cleaning, encoding, scaling, splitting
+│   ├── train.py            # Model training & evaluation
+│   └── app.py              # Flask prediction API
+├── models/                 # Saved model artefacts
+├── outputs/                # Evaluation results
+├── Dockerfile
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Setup
+
+```bash
+git clone <your-repo>
+cd hotel_mlops
+pip install -r requirements.txt
+```
+
+---
+
+## Usage
+
+### 1 — EDA
+```bash
+python src/data_ingestion.py
+```
+
+### 2 — Train Models
+```bash
+python src/train.py
+```
+Trains Logistic Regression, Random Forest, and Gradient Boosting.  
+Saves best model (by ROC-AUC) to `models/best_model.pkl`.
+
+### 3 — Run API
+```bash
+python src/app.py
+```
+
+### 4 — Make a Prediction
+```bash
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "no_of_adults": 2,
+    "no_of_children": 0,
+    "no_of_weekend_nights": 1,
+    "no_of_week_nights": 2,
+    "type_of_meal_plan": "Meal Plan 1",
+    "required_car_parking_space": 0,
+    "room_type_reserved": "Room_Type 1",
+    "lead_time": 150,
+    "arrival_year": 2018,
+    "arrival_month": 7,
+    "arrival_date": 15,
+    "market_segment_type": "Online",
+    "repeated_guest": 0,
+    "no_of_previous_cancellations": 1,
+    "no_of_previous_bookings_not_canceled": 0,
+    "avg_price_per_room": 110.0,
+    "no_of_special_requests": 0
+  }'
+```
+
+---
+
+## Docker
+
+```bash
+docker build -t hotel-mlops .
+docker run -p 5000:5000 hotel-mlops
+```
+
+---
+
+## Initial Observations (EDA)
+
+- Cancellations account for ~33% of bookings — a meaningful class imbalance to track.
+- Cancelled bookings have significantly higher lead times (~140 days) vs kept bookings (~80 days).
+- Guests with more special requests cancel far less often — a strong negative predictor.
+- Online bookings have higher cancellation rates than offline/direct bookings.
+- Room price does not differ dramatically between groups, but higher-priced rooms cancel slightly more.
+
+---
+
+## Weekly Roadmap
+
+| Week | Focus |
+|------|-------|
+| 1 | Project Intro & Environment Setup |
+| 2 | Data Ingestion & EDA |
+| 3 | Model Training & Evaluation |
+| 4 | Experiment Tracking with MLflow |
+| 5 | Docker & Flask API |
+| 6 | CI/CD with Jenkins |
+| 7 | Cloud Deployment & Monitoring (GCP, Prometheus, Grafana) |
+| 8 | Final Deployment & Showcase |
